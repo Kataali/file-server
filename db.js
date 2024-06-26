@@ -5,7 +5,7 @@ const mysqlpool = mysql.createPool({
     user:'root',
     password:'mySqlPassword@123',
     database:'amali_db'
-})
+});
 
 
 module.exports = mysqlpool

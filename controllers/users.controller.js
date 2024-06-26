@@ -1,28 +1,47 @@
-const express = require("express")
-
+const express = require("express");
 router = express.Router();
+const service = require("../services/users.service");
+const client = require("../databasepg");
 
-const service = require("../services/users.service")
+
+
 
 // API end point
 // http://localhost:3000/amali-api/users
 
 // SignUp
-router.post('/signup/', async (req, res) => {
+router.post('/signup', async (req, res) => {
     const result = await service.addUser(req.body)
     // res.status(200).send("User successfully added")
     res.send(result)
 }) 
 
 // Login
-router.get('/login/:email', async (req, res) => {
-    const userPassword = await service.logIn(req.params.email)
-    if (userPassword.length == 0){
-        res.status(404).json("No User with given email : " + req.params.email)
+router.get('/login/:email', async(req, res) => {
+    const {email} = req.params;
+    console.log(email)
+    const userPassword = await service.logIn(email);
+    console.log(userPassword)
+    if (userPassword.rows.length === 0){
+        res.status(404).json("No User with given email : " + email)
     }
     else
-        res.send(userPassword)
+        res.send(userPassword.rows)
 }) 
+
+// Update User Password
+router.put('/update-password/:email', async (req, res) => {
+    const result = await service.updatePassword(req.body, req.params.email)
+    res.status(200).send(result)
+})
+
+
+// Get all users
+router.get("/users", async(req, res) => {
+    const users = await service.getUsers();
+    console.log(users.rows)
+    res.send(users.rows)
+})
 
 
 

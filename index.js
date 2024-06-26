@@ -1,8 +1,11 @@
 const express = require("express");
 const bodyparser = require("body-parser");
-const db = require("./db");
+const client = require("./databasepg");
 const cors = require("cors");
+const multer = require('multer');
 usersRoute = require("./controllers/users.controller");
+filesRoute = require("./controllers/files.controller");
+
 
 // App config
 const app = express();
@@ -11,15 +14,21 @@ const app = express();
 app.use(bodyparser.json());
 app.use(cors());
 app.use('/amali-api/users', usersRoute);
+app.use('/amali-api/files', filesRoute);
+app.use(bodyparser.urlencoded({extended: true}));
+app.use('/files', express.static('files'));
 
-// DB connection check
-// To Check if the database is actually connected or not since there is no way of checking before creating the pool
-db.query("Select 1")
-.then(() => {console.log("DB connection successful")
+// Postgres DB connection check
+client.connect()
+.then(async () => {
+     client.query('SELECT version(), current_database(), current_schemas(false)', (err, res) => {
+        console.log(res.rows[0])
+    })
+    console.log("Successfully connected to amali postgres database")
     // Start server
     app.listen(3000, 
         () => console.log("amali express server started at port 3000"))
 })
-.catch(e => console.log(e + "DB connection unsuccessful"));
+.catch((err) => {console.log("Unable to connect to database", err)})
 
 

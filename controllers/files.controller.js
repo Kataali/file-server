@@ -34,5 +34,24 @@ router.get("/all-files", async(req, res) => {
     res.send(users.rows);
 })
 
+// Download file
+router.get("/download/:title", async(req, res) => {
+    const filePath = "C:/Users/Kataali/Desktop/Node/file_server/files/";
+    const title = req.params.title;
+    var fileName = await service.getFile(title);
+    fileName = fileName["file"];
+    res.download(`${filePath}${fileName}`);
+})
+
+// Email File
+router.post("/mail/:title", async(req, res) => {
+    const email = req.body.email;
+    const title = req.params.title;
+    var fileName = await service.getFile(title);
+    fileName = fileName["file"];
+    var result = await service.emailFile(email, fileName, title);
+    res.status(200).send({message: `File sent to ${email} successfully`},);
+})
+
 
 module.exports = router;

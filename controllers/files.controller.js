@@ -36,7 +36,7 @@ router.get("/all-files", async(req, res) => {
 
 // Download file
 router.get("/download/:title", async(req, res) => {
-    const filePath = "C:/Users/Kataali/Desktop/Node/file_server/files/";
+    const filePath = path.join(__dirname, "../files/");
     const title = req.params.title;
     var fileName = await service.getFile(title);
     fileName = fileName["file"];
@@ -53,5 +53,11 @@ router.post("/mail/:title", async(req, res) => {
     res.status(200).send({message: `File sent to ${email} successfully`},);
 })
 
+// Search Database for a keyword
+router.get("/search/:keyword", async(req, res) => {
+    const keyword = req.params.keyword;
+    const searchResults = await service.searchForFile(keyword);
+    res.status(200).send(searchResults);
+})
 
 module.exports = router;

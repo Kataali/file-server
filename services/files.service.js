@@ -1,11 +1,12 @@
 const db = require("../databasepg")
 const nodemailer = require("nodemailer");
+const path = require("node:path")
 
 // Add file to the Database
 module.exports.uploadFile = async(obj, chosenFile) => {
     const file = chosenFile;
-    const title = obj.title;
-    const description = obj.description;
+    const title = obj.title.trim();
+    const description = obj.description.trim();
     const response = await db.query("INSERT into files(title, description, file) VALUES($1, $2, $3)", [title, description, file.filename])
     .catch(e => console.log(e));
     return response;
@@ -20,16 +21,15 @@ module.exports.getFiles = async() => {
 
 // Get file from Database
 module.exports.getFile = async(title) => {
-    // const title = obj.title;
-    const response = await db.query('SELECT file FROM files WHERE title = $1', [title])
+    const response = await db.query('SELECT file FROM files WHERE title = $1', [title.trim()])
     .catch(e => console.log("Failed to get file path" + e))
         return response.rows[0];
 }
 
 
-// NodeMailer 
+// Mail File to address
 module.exports.emailFile = async(email, fileName, fileTitle) => {
-    const filePath = "C:/Users/Kataali/Desktop/Node/file_server/files/";
+    const filePath = path.join(__dirname, "../files/");
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -50,3 +50,12 @@ module.exports.emailFile = async(email, fileName, fileTitle) => {
     .catch(e => {return e})
         return response;
 }
+
+// Search database for keyword
+module.exports.searchForFile = async(keyword) => {
+    const response = await db.query(`SELECT file FROM files WHERE title LIKE $1 OR description LIKE $1`, [`%${keyword.trim()}%`])
+    .catch(e => console.log("Failed to search database" + e))
+        return response;
+}
+
+// 

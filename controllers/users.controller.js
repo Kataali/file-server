@@ -19,14 +19,8 @@ router.post('/signup', async (req, res) => {
 // Login
 router.get('/login/:email', async(req, res) => {
     const {email} = req.params;
-    console.log(email)
-    const userPassword = await service.logIn(email);
-    console.log(userPassword)
-    if (userPassword.rows.length === 0){
-        res.status(404).json("No User with given email : " + email)
-    }
-    else
-        res.send(userPassword.rows)
+    const result = await service.logIn(email, req.body);
+    res.send({"message": result});
 }) 
 
 // Update User Password

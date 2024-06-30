@@ -5,6 +5,7 @@ const cors = require("cors");
 const multer = require('multer');
 usersRoute = require("./controllers/users.controller");
 filesRoute = require("./controllers/files.controller");
+statsRoute = require("./controllers/stats.controller");
 
 
 // App config
@@ -15,6 +16,7 @@ app.use(bodyparser.json());
 app.use(cors());
 app.use('/amali-api/users', usersRoute);
 app.use('/amali-api/files', filesRoute);
+app.use('/amali-api/file-stats', statsRoute);
 app.use(bodyparser.urlencoded({extended: true}));
 app.use('/files', express.static('files'));
 

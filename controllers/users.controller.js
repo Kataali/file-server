@@ -4,8 +4,6 @@ const service = require("../services/users.service");
 const client = require("../databasepg");
 
 
-
-
 // API end point
 // http://localhost:3000/amali-api/users
 

@@ -1,4 +1,4 @@
-const db = require("../databasepg")
+const db = require("../databasepg");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -22,7 +22,7 @@ module.exports.addUser = async (obj) => {
 //Get password from the Database
 module.exports.logIn = async(email, obj) => {
     const password = obj.password.trim();
-    const response = await db.query("SELECT * FROM users WHERE email = $1", [email.trim()])
+    const response = await db.query("SELECT * FROM users WHERE email = $1", [email])
         .catch(e => console.log(e))
         if (response.rows.length > 0){
             const hashedPassword = response.rows[0].password;
@@ -48,7 +48,7 @@ module.exports.logIn = async(email, obj) => {
 // Change Password in Database
 module.exports.updatePassword = async(obj, email) => {
     const password = obj.password.trim();
-    const response = await db.query("UPDATE users SET password = $1 WHERE email = $2", [password, email.trim()])
+    const response = await db.query("UPDATE users SET password = $1 WHERE email = $2", [password, email])
         .catch(e => console.log(e))
         return response;
 }

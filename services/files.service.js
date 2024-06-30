@@ -1,4 +1,4 @@
-const db = require("../databasepg")
+const db = require("../databasepg");
 const nodemailer = require("nodemailer");
 const path = require("node:path")
 
@@ -19,8 +19,8 @@ module.exports.getFiles = async() => {
         return response;
   }
 
-// Get file from Database
-module.exports.getFile = async(title) => {
+// Get file path from Database
+module.exports.getFileDbPath = async(title) => {
     const response = await db.query('SELECT file FROM files WHERE title = $1', [title.trim()])
     .catch(e => console.log("Failed to get file path" + e))
         return response.rows[0];

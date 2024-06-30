@@ -6,6 +6,7 @@ router = express.Router();
 
 const service = require("../services/files.service");
 const client = require("../databasepg");
+const statService = require("../services/stats.service");
 
 // storage using multer
 var storage = multer.diskStorage({
@@ -28,7 +29,7 @@ router.post("/file-upload", upload.single('file'), async(req, res) => {
 
 
 // Get all files
-router.get("/all-files", async(req, res) => {
+router.get("/all", async(req, res) => {
     const users = await service.getFiles();
     console.log(users.rows);
     res.send(users.rows);
@@ -38,18 +39,35 @@ router.get("/all-files", async(req, res) => {
 router.get("/download/:title", async(req, res) => {
     const filePath = path.join(__dirname, "../files/");
     const title = req.params.title;
-    var fileName = await service.getFile(title);
-    fileName = fileName["file"];
-    res.download(`${filePath}${fileName}`);
+    let dbFilePath = await service.getFileDbPath(title);
+    if(dbFilePath){
+        dbFilePath = dbFilePath["file"];
+
+    // increase download count
+    await statService.incrementDownloadCount(dbFilePath);
+
+    // Download
+    res.download(`${filePath}${dbFilePath}`, async (err) => {
+        if(err){
+            await statService.decrementDownloadCount(dbFilePath);
+            console.log("There was a problem downloading file", err);
+        }
+        else
+            console.log("Download completed");
+    });
+    }else
+        res.status(400).send("No file with that title");
+    
 })
 
 // Email File
 router.post("/mail/:title", async(req, res) => {
     const email = req.body.email;
     const title = req.params.title;
-    var fileName = await service.getFile(title);
-    fileName = fileName["file"];
-    var result = await service.emailFile(email, fileName, title);
+    var dbFilePath = await service.getFileDbPath(title);
+    dbFilePath = dbFilePath["file"];
+    var result = await service.emailFile(email, dbFilePath, title);
+    await statService.incrementEmailsSent(dbFilePath);
     res.status(200).send({message: `File sent to ${email} successfully`},);
 })
 
@@ -58,6 +76,13 @@ router.get("/search/:keyword", async(req, res) => {
     const keyword = req.params.keyword;
     const searchResults = await service.searchForFile(keyword);
     res.status(200).send(searchResults);
+})
+
+router.get("/download-stats/:filePath", async (req, res) => {
+    const filePath = req.params.filePath;
+    const results = await statService.incrementDownloadCount(filePath);
+    await statService.incrementEmailsSent(filePath);
+    res.send(results);
 })
 
 module.exports = router;

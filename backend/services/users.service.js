@@ -4,14 +4,15 @@ const saltRounds = 10;
 
 // Insert new user into database
 module.exports.addUser = async (obj) => {
-    const email = obj.email.trim();
-    const password = obj.password.trim();
+    const email = obj.email;
+    const password = obj.password;
+    console.log(email, password);
     const id = (Date.now() * Math.random()).toString().substring(0, 10);
     bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
         if(err){
             throw "Error Hashing Password";
         }
-        const response = await db.query('INSERT INTO users(id, email, password) VALUES ($1, $2, $3)', [id, obj.email, hashedPassword])
+        const response = await db.query('INSERT INTO users(id, email, password) VALUES ($1, $2, $3)', [id, email, hashedPassword])
             .catch(e => { throw "database query error" });
         return response;
     })
@@ -20,16 +21,16 @@ module.exports.addUser = async (obj) => {
 
 //Get password from the Database
 module.exports.logIn = async(email, obj) => {
-    const password = obj.password.trim();
+    const password = obj.password;
     const response = await db.query("SELECT * FROM users WHERE email = $1", [email])
         .catch(e => { throw "database query error" });
         if (response.rows.length > 0){
             const hashedPassword = response.rows[0].password;
             if(bcrypt.compareSync(password, hashedPassword)){
-                return "Login Successful";
+                return response.rows;
             }
             else
-                return "Failed to login";
+                throw "Failed to login";
         }else
             throw "Account not found";
         

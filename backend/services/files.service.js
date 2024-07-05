@@ -1,7 +1,7 @@
 const db = require("../databasepg");
 // const nodemailer = require("nodemailer");
 const path = require("node:path")
-const nodemailerConfig = require("../nodemailer.config")
+// const nodemailerConfig = require("../nodemailer.config")
 
 // Add file to the Database
 module.exports.uploadFile = async(obj, chosenFile) => {

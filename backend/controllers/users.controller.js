@@ -11,7 +11,7 @@ const client = require("../databasepg");
 router.post('/signup', async (req, res) => {
     try {
         const result = await service.addUser(req.body)
-    res.status(200).send("User successfully added")
+    res.status(200).send(result)
     // res.send(result)
     } catch (error) {
         res.status(400).send(error);
@@ -19,7 +19,7 @@ router.post('/signup', async (req, res) => {
 }) 
 
 // Login
-router.get('/login/:email', async (req, res) => {
+router.post('/login/:email', async (req, res) => {
     try {
         const {email} = req.params;
     const result = await service.logIn(email, req.body);

@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("node:path");
+const cors = require("cors");
 
 router = express.Router();
 
@@ -36,39 +37,64 @@ router.get("/all", async(req, res) => {
 })
 
 // Download file
-router.get("/download/:title", async(req, res) => {
-    const filePath = path.join(__dirname, "../files/");
-    const title = req.params.title;
-    let dbFilePath = await service.getFileDbPath(title);
-    if(dbFilePath){
-        dbFilePath = dbFilePath["file"];
+// router.get("/download/:title", async(req, res) => {
+//     const filePath = path.join(__dirname, "../files/");
+//     const title = req.params.title;
+//     let dbFilePath = await service.getFileDbPath(title);
+//     if(dbFilePath){
+//         dbFilePath = dbFilePath["file"];
 
-    // increase download count
-    await statService.incrementDownloadCount(dbFilePath);
+//     // increase download count
+//     await statService.incrementDownloadCount(dbFilePath);
 
+    // // Download
+    // res.download(`${filePath}${dbFilePath}`, async (err) => {
+    //     if(err){
+    //         await statService.decrementDownloadCount(dbFilePath);
+    //         console.log("There was a problem downloading file", err);
+    //     }
+    //     else
+    //         console.log("Download completed");
+    // });
+    // }else
+    //     res.status(400).send("No file with that title");
+// })
+
+// Download file
+router.get('/download/:path', async (req, res) => {
+    const filePath = req.params.path;
+    const rootPath = path.join(__dirname, "../files/");
+    // Increment DOwnload count
+    await statService.incrementDownloadCount(filePath);
     // Download
-    res.download(`${filePath}${dbFilePath}`, async (err) => {
-        if(err){
-            await statService.decrementDownloadCount(dbFilePath);
+    res.download(`${rootPath}${filePath}`, async (err) => {
+        if (err) {
+            // Decrement Download count
+            await statService.decrementDownloadCount(filePath);
             console.log("There was a problem downloading file", err);
         }
         else
             console.log("Download completed");
     });
-    }else
-        res.status(400).send("No file with that title");
-    
+    // }else
+    // res.status(400).send("No file with that title");
+
 })
 
 // Email File
-router.post("/mail/:title", async(req, res) => {
+router.post("/mail/:path", async(req, res) => {
     const email = req.body.email;
-    const title = req.params.title;
-    var dbFilePath = await service.getFileDbPath(title);
-    dbFilePath = dbFilePath["file"];
-    var result = await service.emailFile(email, dbFilePath, title);
-    await statService.incrementEmailsSent(dbFilePath);
-    res.status(200).send({message: `File sent to ${email} successfully`},);
+    const path = req.params.path;
+    const title = req.body.title;
+    try {
+        // Increment emails sent
+    await statService.incrementEmailsSent(path);
+        var result = await service.emailFile(email, path, title);
+        res.status(200).send({message: `File sent to ${email} successfully`},);
+    } catch (error) {
+        await statService.decrementEmailsSent(path);
+    }
+    
 })
 
 // Search Database for a keyword

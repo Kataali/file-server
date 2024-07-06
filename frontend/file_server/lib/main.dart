@@ -5,6 +5,7 @@ import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/login.dart';
 import 'package:file_server/pages/opt.dart';
 import 'package:file_server/pages/signup.dart';
+import 'package:file_server/providers/file.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,9 +26,9 @@ class FileServerApp extends StatelessWidget {
         ChangeNotifierProvider<UserData>(
           create: (_) => UserData(),
         ),
-        // ChangeNotifierProvider<MedicationData>(
-        //   create: (_) => MedicationData(),
-        // ),
+        ChangeNotifierProvider<FileData>(
+          create: (_) => FileData(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

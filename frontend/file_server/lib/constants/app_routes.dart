@@ -1,3 +1,4 @@
+import 'package:file_server/pages/file_email.dart';
 import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/forgot_password.dart';
 import 'package:file_server/pages/login.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
       HomePage.routeName: (context) => const HomePage(),
       OtpPage.routeName: (context) => const OtpPage(),
       ForgotPasswordPage.routeName: (context) => const ForgotPasswordPage(),
+      FileEmailPage.routeName: (context) => const FileEmailPage(),
     };
   }
 }

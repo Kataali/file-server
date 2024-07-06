@@ -227,7 +227,6 @@ class _LoginPageState extends State<LoginPage> {
     );
     if (res.statusCode == 200) {
       final resData = jsonDecode(res.body);
-      // print(resData["message"][0]);
       final User user = User.fromJson(resData["message"][0]);
       if (context.mounted) {
         Provider.of<UserData>(context, listen: false).getUser(user);

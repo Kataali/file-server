@@ -12,8 +12,16 @@ statsRoute = require("./controllers/stats.controller");
 const app = express();
 
 // middleware config
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+//     res.header("Access-Control-Max-Age", "1728000");
+//     res.header("Access-Control-Allow-Credentials", "true");
+//     next();
+// })
 app.use(bodyparser.json());
-app.use(cors());
+app.use(cors({allowedHeaders: ["Origin", 'X-Requested-With', 'Content-Type', 'Accept'], maxAge: 1728000, methods:['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'HEAD'], credentials: true, origin:"*"}));
 app.use('/amali-api/users', usersRoute);
 app.use('/amali-api/files', filesRoute);
 app.use('/amali-api/file-stats', statsRoute);

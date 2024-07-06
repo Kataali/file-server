@@ -6,7 +6,7 @@ ThemeData themeData() {
     // scaffoldBackgroundColor: const Color.fromRGBO(255, 255, 255, 1),
     scaffoldBackgroundColor: const Color.fromRGBO(235, 238, 239, 1.0),
     colorScheme: ThemeData().colorScheme.copyWith(
-        primary: const Color.fromARGB(255, 156, 208, 171),
+        primary: const Color.fromARGB(255, 54, 163, 85),
         onPrimary: const Color.fromRGBO(255, 255, 255, 1),
         onSurface: Colors.grey,
         secondary: const Color.fromRGBO(29, 30, 32, 1),

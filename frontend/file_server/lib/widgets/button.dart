@@ -3,10 +3,15 @@ import 'package:flutter/services.dart';
 
 class MyButton extends StatelessWidget {
   const MyButton(
-      {super.key, required this.text, required this.onPressed, this.color});
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      this.color,
+      this.leading = const SizedBox()});
   final String text;
   final Function() onPressed;
   final Color? color;
+  final Widget leading;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +27,23 @@ class MyButton extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
             backgroundColor: color ?? colorScheme.primary),
-        child: Text(
-          text,
-          style: TextStyle(
-              color: colorScheme.secondary,
-              fontSize: 16,
-              fontWeight: FontWeight.w700),
-          textAlign: TextAlign.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            leading,
+            const VerticalDivider(
+              thickness: 0.001,
+              width: 10,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

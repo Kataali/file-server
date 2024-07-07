@@ -8,15 +8,12 @@ module.exports.uploadFile = async(obj, chosenFile) => {
     const file = chosenFile;
     const title = obj.title.trim();
     const description = obj.description.trim();
-    console.log(file);
-    console.log(title);
-    console.log(description);
     const response = await db.query("INSERT into files(title, type, description, uploadedOn, file) VALUES($1, $2, $3, CURRENT_TIMESTAMP, $4)", [title, path.extname(file.filename), description, file.filename])
         .catch(e => {
             throw "database query error";
             
          });
-    return response;
+    return file.filename;
 }
 
 // Get All Files from Database
@@ -28,10 +25,18 @@ module.exports.getFiles = async() => {
         return response;
 }
 
+// Get All Files from Database
+module.exports.getFileByPath = async(dbPath) => {
+    const response = await db.query('SELECT * FROM files WHERE file = $1', [dbPath])
+        .catch(e => {
+            throw "database query error";
+    })
+        return response.rows[0]["id"];
+}
 
 // Get file path from Database
-module.exports.getFileDbPath = async(title) => {
-    const response = await db.query('SELECT file FROM files WHERE title = $1', [title.trim()])
+module.exports.getFileDbPath = async(dbPath) => {
+    const response = await db.query('SELECT file FROM files WHERE title = $1', [dbPath])
         .catch(e => {
             throw "database query error";
         });

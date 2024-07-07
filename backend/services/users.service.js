@@ -21,11 +21,9 @@ module.exports.addUser = async (obj) => {
 }
 
 //Get password from the Database
-module.exports.logIn = async(email, obj) => {
-    const password = obj.password;
+module.exports.logIn = async(email, password) => {
     const response = await db.query("SELECT * FROM users WHERE email = $1", [email])
         .catch(e => { console.log(e); throw "database query error" });
-    // console.log(response);
         if (response.rows.length > 0){
             const hashedPassword = response.rows[0].password;
             if(bcrypt.compareSync(password, hashedPassword)){
@@ -137,4 +135,11 @@ module.exports.verifyOtp = async(otp, obj) =>{
         throw error;
     }
     return false; 
+}
+
+// Delete User from Database 
+module.exports.deleteUser = async (userId) => {
+     const response =  await db.query("DELETE FROM users WHERE id = $1", [userId])
+        .catch(e => { throw e })
+    return response;
 }

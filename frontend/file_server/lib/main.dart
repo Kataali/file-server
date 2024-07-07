@@ -36,7 +36,7 @@ class FileServerApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: themeData(),
         routes: AppRoutes.getRoutes(),
-        home: const AdminNavPage(),
+        home: const LoginPage(),
       ),
     );
   }

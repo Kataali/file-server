@@ -39,133 +39,141 @@ class SearchPage extends StatelessWidget {
         child: MyAppBar(title: "Search result(s) for $keyword"),
       ),
       body: provider.searchedFilesLength != 0
-          ? Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: Consumer<FileData>(builder:
-                        (BuildContext context, FileData value, Widget? child) {
-                      return FittedBox(
-                        fit: BoxFit.contain,
-                        child: DataTable(
-                          headingTextStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                              color: color.onPrimary),
-                          columnSpacing: 20,
-                          headingRowColor:
-                              WidgetStateProperty.all(color.primary),
-                          dataTextStyle: TextStyle(color: color.secondary),
-                          columns: List.generate(
-                            cols.length,
-                            (index) => DataColumn(
-                              label: Text(
-                                cols[index],
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: Consumer<FileData>(builder:
+                          (BuildContext context, FileData value,
+                              Widget? child) {
+                        return FittedBox(
+                          fit: BoxFit.contain,
+                          child: DataTable(
+                            headingTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                color: color.onPrimary),
+                            columnSpacing: 20,
+                            headingRowColor:
+                                WidgetStateProperty.all(color.primary),
+                            dataTextStyle: TextStyle(color: color.secondary),
+                            columns: List.generate(
+                              cols.length,
+                              (index) => DataColumn(
+                                label: Text(
+                                  cols[index],
+                                ),
                               ),
                             ),
-                          ),
-                          rows: List.generate(
-                            provider.searchedFilesLength,
-                            (index) {
-                              File file =
-                                  provider.getSearchedFileByIndex(index);
-                              return DataRow(cells: <DataCell>[
-                                DataCell(
-                                  Text(file.title),
-                                ),
-                                DataCell(
-                                  Text(file.type),
-                                ),
-                                DataCell(
-                                  Text(file.description),
-                                ),
-                                DataCell(
-                                  Text(file.uploadedOn),
-                                ),
-                                DataCell(
-                                  IconButton(
-                                    onPressed: () async {
-                                      // print("Download ${file.path}");
-                                      final String filePath = file.path;
-                                      final String name = file.title;
-                                      final String ext = file.type;
-                                      try {
-                                        if (await downloadFile(name, filePath,
-                                            ext, serverEndpoint)) {
+                            rows: List.generate(
+                              provider.searchedFilesLength,
+                              (index) {
+                                File file =
+                                    provider.getSearchedFileByIndex(index);
+                                return DataRow(cells: <DataCell>[
+                                  DataCell(
+                                    Text(file.title),
+                                  ),
+                                  DataCell(
+                                    Text(file.type),
+                                  ),
+                                  DataCell(
+                                    Text(file.description),
+                                  ),
+                                  DataCell(
+                                    Text(file.uploadedOn),
+                                  ),
+                                  DataCell(
+                                    IconButton(
+                                      onPressed: () async {
+                                        // print("Download ${file.path}");
+                                        final String filePath = file.path;
+                                        final String name = file.title;
+                                        final String ext = file.type;
+                                        final int fileId = file.id;
+                                        try {
+                                          if (await downloadFile(name, filePath,
+                                              ext, serverEndpoint, fileId)) {
+                                            if (context.mounted) {
+                                              CustomSnackbar.show(
+                                                context,
+                                                "Download Finished",
+                                              );
+                                            }
+                                          } else {
+                                            if (context.mounted) {
+                                              CustomSnackbar.show(
+                                                context,
+                                                "Could not download file Try Again",
+                                              );
+                                            }
+                                          }
+                                        } catch (e) {
                                           if (context.mounted) {
                                             CustomSnackbar.show(
                                               context,
-                                              "Download Finished",
-                                            );
-                                          }
-                                        } else {
-                                          if (context.mounted) {
-                                            CustomSnackbar.show(
-                                              context,
-                                              "Could not download file Try Again",
+                                              "Could not download file Try Again $e",
                                             );
                                           }
                                         }
-                                      } catch (e) {
-                                        if (context.mounted) {
-                                          CustomSnackbar.show(
-                                            context,
-                                            "Could not download file Try Again $e",
-                                          );
-                                        }
-                                      }
-                                    },
-                                    icon: Container(
-                                        decoration: ShapeDecoration(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            side: const BorderSide(width: 0.5),
+                                      },
+                                      icon: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              side:
+                                                  const BorderSide(width: 0.5),
+                                            ),
+                                            // color: color.tertiary,
                                           ),
-                                          // color: color.tertiary,
-                                        ),
-                                        padding: const EdgeInsets.all(3),
-                                        margin: const EdgeInsets.only(right: 7),
-                                        child: const Icon(
-                                            Icons.download_outlined)),
+                                          padding: const EdgeInsets.all(3),
+                                          margin:
+                                              const EdgeInsets.only(right: 7),
+                                          child: const Icon(
+                                              Icons.download_outlined)),
+                                    ),
                                   ),
-                                ),
-                                DataCell(
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        FileEmailPage.routeName,
-                                        arguments: FileArgs(
-                                          path: file.path,
-                                          title: file.title,
-                                        ),
-                                      );
-                                      // print("Email  ${file.title}");
-                                    },
-                                    icon: Container(
-                                        decoration: ShapeDecoration(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            side: const BorderSide(width: 1),
+                                  DataCell(
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          FileEmailPage.routeName,
+                                          arguments: FileArgs(
+                                            path: file.path,
+                                            title: file.title,
+                                            fileId: file.id,
                                           ),
-                                        ),
-                                        padding: const EdgeInsets.all(3),
-                                        margin: const EdgeInsets.only(right: 7),
-                                        child:
-                                            const Icon(Icons.email_outlined)),
+                                        );
+                                        // print("Email  ${file.title}");
+                                      },
+                                      icon: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              side: const BorderSide(width: 1),
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.all(3),
+                                          margin:
+                                              const EdgeInsets.only(right: 7),
+                                          child:
+                                              const Icon(Icons.email_outlined)),
+                                    ),
                                   ),
-                                ),
-                              ]);
-                            },
+                                ]);
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    })),
-                  ],
-                ),
-              ],
+                        );
+                      })),
+                    ],
+                  ),
+                ],
+              ),
             )
           : Center(
               child: Column(
@@ -186,9 +194,10 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-  Future<bool> downloadFile(filename, filePath, ext, serverEndpoint) async {
+  Future<bool> downloadFile(
+      filename, filePath, ext, serverEndpoint, fileId) async {
     try {
-      final url = Uri.parse("$serverEndpoint/download/$filePath");
+      final url = Uri.parse("$serverEndpoint/download/$filePath/$fileId");
       final response = await http.get(url);
       final blob = html.Blob([response.bodyBytes]);
       final anchorElement = html.AnchorElement(

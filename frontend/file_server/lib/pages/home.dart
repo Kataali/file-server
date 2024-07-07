@@ -1,12 +1,8 @@
 import 'package:file_server/pages/files.dart';
 import 'package:file_server/pages/manage_account.dart';
 import 'package:file_server/pages/search.dart';
-import 'package:file_server/widgets/app_bar.dart';
-import 'package:file_server/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import '../models/api_model.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';

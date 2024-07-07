@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:file_server/models/file_args.dart';
-import 'package:file_server/widgets/auth_text_field.dart';
 import 'package:file_server/widgets/button.dart';
 import 'package:file_server/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +31,7 @@ class _FileEmailPageState extends State<FileEmailPage> {
     final args = ModalRoute.of(context)!.settings.arguments as FileArgs?;
     final String? title = args?.title;
     final String? path = args?.path;
+    final int? fileId = args?.fileId;
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -84,7 +84,7 @@ class _FileEmailPageState extends State<FileEmailPage> {
                           return;
                         } else {
                           try {
-                            if (await sendEmail(email, path, title)) {
+                            if (await sendEmail(email, path, title, fileId)) {
                               if (context.mounted) {
                                 CustomSnackbar.show(
                                   context,
@@ -126,14 +126,14 @@ class _FileEmailPageState extends State<FileEmailPage> {
     );
   }
 
-  Future<bool> sendEmail(email, path, title) async {
+  Future<bool> sendEmail(email, path, title, fileId) async {
     final res = await http.post(
       Uri.parse("$serverEndpoint/mail/$path"),
       headers: {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(
-        {"email": email, "title": title},
+        {"email": email, "title": title, "fileId": fileId},
       ),
     );
     // print(res.body);

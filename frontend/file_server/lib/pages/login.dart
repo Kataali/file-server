@@ -43,8 +43,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
-    final deviceHeight = MediaQuery.of(context).size.height;
-    final deviceWidth = MediaQuery.of(context).size.width;
+    // final deviceHeight = MediaQuery.of(context).size.height;
+    // final deviceWidth = MediaQuery.of(context).size.width;
 
     return PopScope(
       canPop: false,
@@ -57,152 +57,154 @@ class _LoginPageState extends State<LoginPage> {
               SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
             },
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: Center(
-                    child: Container(
-                      color: color.onPrimary,
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      width: 700,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 30.0, top: 70),
-                            child: Text(
-                              'Login',
-                              style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w500,
-                                  color: color.secondary),
-                            ),
-                          ),
-                          AuthTextField(
-                            prefixIcon: const Icon(Icons.email_outlined),
-                            suffixIcon: null,
-                            hintText: 'Email',
-                            controller: emailController,
-                            contentPadding:
-                                const EdgeInsets.only(top: 5, left: 16.0),
-                            obscure: false,
-                            keyboard: TextInputType.emailAddress,
-                          ),
-                          const Divider(
-                            height: 30,
-                            thickness: .001,
-                          ),
-                          AuthTextField(
-                            prefixIcon: const Icon(Icons.key_outlined),
-                            suffixIcon: InkWell(
-                              onTap: () {
-                                setState(
-                                  () {
-                                    showPassword = !showPassword;
-                                  },
-                                );
-                              },
-                              child: showPassword
-                                  ? const Icon(Icons.visibility_outlined)
-                                  : const Icon(Icons.visibility_off_outlined),
-                            ),
-                            hintText: ' Password',
-                            controller: passwordController,
-                            contentPadding:
-                                const EdgeInsets.only(top: 5, left: 16.0),
-                            obscure: showPassword ? false : true,
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, ForgotPasswordPage.routeName);
-                              },
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Center(
+                      child: Container(
+                        color: color.onPrimary,
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        width: 700,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 30.0, top: 70),
                               child: Text(
-                                "Forgot Password?",
+                                'Login',
                                 style: TextStyle(
-                                    color: color.onSecondary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w500,
+                                    color: color.secondary),
                               ),
                             ),
-                          ),
-                          const Divider(
-                            height: 30,
-                            thickness: .001,
-                          ),
-                          MyButton(
-                            onPressed: () async {
-                              SystemChannels.textInput
-                                  .invokeMethod<void>('TextInput.hide');
-                              final String email =
-                                  emailController.value.text.trim();
-                              final String password =
-                                  passwordController.value.text.trim();
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              } else {
-                                try {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  if (await logIn(email, password)) {
-                                    if (context.mounted) {
-                                      CustomSnackbar.show(
-                                          context, "Login Successful");
-                                      Navigator.pushNamed(
-                                          context, HomePage.routeName);
-                                    }
-                                  } else {
-                                    if (context.mounted) {
-                                      CustomSnackbar.show(context,
-                                          "Wrong Password. Try Again!!");
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    CustomSnackbar.show(context,
-                                        "Enter a registered Email. $e");
-                                  }
-                                }
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              }
-                            },
-                            text: 'Login',
-                          ),
-                          const Divider(
-                            height: 30,
-                            thickness: .001,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Don't have an Account?",
-                                style: TextStyle(
-                                    color: color.secondary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500),
+                            AuthTextField(
+                              prefixIcon: const Icon(Icons.email_outlined),
+                              suffixIcon: null,
+                              hintText: 'Email',
+                              controller: emailController,
+                              contentPadding:
+                                  const EdgeInsets.only(top: 5, left: 16.0),
+                              obscure: false,
+                              keyboard: TextInputType.emailAddress,
+                            ),
+                            const Divider(
+                              height: 30,
+                              thickness: .001,
+                            ),
+                            AuthTextField(
+                              prefixIcon: const Icon(Icons.key_outlined),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      showPassword = !showPassword;
+                                    },
+                                  );
+                                },
+                                child: showPassword
+                                    ? const Icon(Icons.visibility_outlined)
+                                    : const Icon(Icons.visibility_off_outlined),
                               ),
-                              TextButton(
+                              hintText: ' Password',
+                              controller: passwordController,
+                              contentPadding:
+                                  const EdgeInsets.only(top: 5, left: 16.0),
+                              obscure: showPassword ? false : true,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
                                 onPressed: () {
                                   Navigator.pushNamed(
-                                      context, SingUpPage.routeName);
+                                      context, ForgotPasswordPage.routeName);
                                 },
                                 child: Text(
-                                  "Sign Up",
+                                  "Forgot Password?",
                                   style: TextStyle(
                                       color: color.onSecondary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400),
                                 ),
-                              )
-                            ],
-                          ),
-                        ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 30,
+                              thickness: .001,
+                            ),
+                            MyButton(
+                              onPressed: () async {
+                                SystemChannels.textInput
+                                    .invokeMethod<void>('TextInput.hide');
+                                final String email =
+                                    emailController.value.text.trim();
+                                final String password =
+                                    passwordController.value.text.trim();
+                                if (!_formKey.currentState!.validate()) {
+                                  return;
+                                } else {
+                                  try {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    if (await logIn(email, password)) {
+                                      if (context.mounted) {
+                                        CustomSnackbar.show(
+                                            context, "Login Successful");
+                                        Navigator.pushNamed(
+                                            context, HomePage.routeName);
+                                      }
+                                    } else {
+                                      if (context.mounted) {
+                                        CustomSnackbar.show(context,
+                                            "Wrong Password. Try Again!!");
+                                      }
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      CustomSnackbar.show(context,
+                                          "Enter a registered Email. $e");
+                                    }
+                                  }
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              },
+                              text: 'Login',
+                            ),
+                            const Divider(
+                              height: 30,
+                              thickness: .001,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Don't have an Account?",
+                                  style: TextStyle(
+                                      color: color.secondary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, SingUpPage.routeName);
+                                  },
+                                  child: Text(
+                                    "Sign Up",
+                                    style: TextStyle(
+                                        color: color.onSecondary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -216,16 +218,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<bool> logIn(email, password) async {
-    final res = await http.post(
-      Uri.parse("$serverEndPoint/login/$email"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(
-        {"password": password},
-      ),
+    final res = await http.get(
+      Uri.parse("$serverEndPoint/login/$email/$password"),
     );
-    print(res.body);
+    // print(res.body);
     if (res.statusCode == 200) {
       final resData = jsonDecode(res.body);
       final User user = User.fromJson(resData[0]);

@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:file_server/pages/file_email.dart';
-import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/search.dart';
 import 'package:file_server/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +14,6 @@ import '../models/api_model.dart';
 import '../models/file.dart';
 import '../models/file_args.dart';
 import '../providers/file.provider.dart';
-import '../providers/user.provider.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/custom_textfield.dart';
 
@@ -56,7 +53,8 @@ class _HomePageViewState extends State<HomePageView> {
           preferredSize: Size(double.infinity, 70),
           child: MyAppBar(title: "Library"),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+          child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
@@ -228,9 +226,11 @@ class _HomePageViewState extends State<HomePageView> {
                                               final String filePath = file.path;
                                               final String name = file.title;
                                               final String ext = file.type;
+                                              final int fileId = file.id;
                                               try {
                                                 if (await downloadFile(
-                                                    name, filePath, ext)) {
+                                                      name,
+                                                    filePath, ext, fileId)) {
                                                   if (context.mounted) {
                                                     CustomSnackbar.show(
                                                       context,
@@ -280,9 +280,9 @@ class _HomePageViewState extends State<HomePageView> {
                                                 context,
                                                 FileEmailPage.routeName,
                                                 arguments: FileArgs(
-                                                  path: file.path,
-                                                  title: file.title,
-                                                ),
+                                                    path: file.path,
+                                                    title: file.title,
+                                                    fileId: file.id),
                                               );
                                               // print("Email  ${file.title}");
                                             },
@@ -314,11 +314,13 @@ class _HomePageViewState extends State<HomePageView> {
                               child: CircularProgressIndicator(),
                             );
                           }),
-                          ),
-                        ],
+                    ),
+                  ],
                 )
               ],
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -340,9 +342,9 @@ class _HomePageViewState extends State<HomePageView> {
     }
   }
 
-  Future<bool> downloadFile(filename, filePath, ext) async {
+  Future<bool> downloadFile(filename, filePath, ext, fileId) async {
     try {
-      final url = Uri.parse("$serverEndpoint/download/$filePath");
+      final url = Uri.parse("$serverEndpoint/download/$filePath/$fileId");
       final response = await http.get(url);
       final blob = html.Blob([response.bodyBytes]);
       final anchorElement = html.AnchorElement(

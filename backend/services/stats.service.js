@@ -1,44 +1,48 @@
 const db = require("../databasepg");
 
 // Increment download count
-module.exports.incrementDownloadCount = async(dbFilePath) => {
-    const result = await db.query("UPDATE file_stats SET download_count = download_count + 1 WHERE file = $1", [dbFilePath])
+module.exports.incrementDownloadCount = async(fileId) => {
+    const result = await db.query("UPDATE file_stats SET download_count = download_count + 1 WHERE file_id = $1", [fileId])
         .catch(e => { console.log("Error incrementing download count", e) });
-    if (result.rowCount < 1) {
-        const response = await db.query("INSERT into file_stats(file, download_count, emails_sent) VALUES($1, 1, 0)", [dbFilePath])
-            .catch(e => { console.log("Error incrementing download count", e) });
-    }
     return result;
 }
 
-// Decrement download count
-module.exports.decrementDownloadCount = async(dbFilePath) => {
-    const result = await db.query("UPDATE file_stats SET download_count = download_count - 1 WHERE file = $1 AND download_count > 0", [dbFilePath])
+// Decrement download count if original count > 0
+module.exports.decrementDownloadCount = async(fileId) => {
+    const result = await db.query("UPDATE file_stats SET download_count = download_count - 1 WHERE file_id = $1 AND download_count > 0", [fileId])
         .catch(e => { console.log("Error incrementing download count", e) });
     return result;
 }
 
 // Increment emails sent
-module.exports.incrementEmailsSent = async (dbFilePath) => {
-    const result = await db.query("UPDATE file_stats SET emails_sent = emails_sent + 1 WHERE file = $1", [dbFilePath])
+module.exports.incrementEmailsSent = async (fileId) => {
+    const result = await db.query("UPDATE file_stats SET email_count = email_count + 1 WHERE file_id = $1", [fileId])
         .catch(e => { console.log("Error incrementing email count", e) })
-    if (result.rowCount < 1) {
-        const response = await db.query("INSERT into file_stats(file, download_count, emails_sent) VALUES($1, 0, 1)", [dbFilePath])
-            .catch(e => { console.log("Error incrementing download count", e) });
-        return result;
-    }
+    return result;
 }
 
-// Decrement emails sent
-module.exports.decrementEmailsSent = async(dbFilePath) => {
-    const result = await db.query("UPDATE file_stats SET emails_sent = emails_sent - 1 WHERE file = $1 AND emails_sent > 0", [dbFilePath])
-    .catch(e =>{console.log("Error incrementing email count", e)})
+// Decrement emails sent if original count greater than 0
+module.exports.decrementEmailsSent = async(fileId) => {
+    const result = await db.query("UPDATE file_stats SET email_count = email_count - 1 WHERE file_id = $1 AND email_count > 0", [fileId])
+        .catch(e => { console.log("Error incrementing email count", e) });
     return result;
+}
+
+// init file stats
+module.exports.initFileStats = async (fileId) => {
+    const response = await db.query("INSERT into file_stats(file_id, download_count, email_count) VALUES($1, 0, 0)", [fileId])
+        .catch(e => { console.log("Error incrementing email count", e) });
+    return response;
 }
 
 // Get stats for all files
 module.exports.getFileStats = async() => {
-    const result = await db.query("SELECT * FROM file_stats ORDER BY id ASC")
+    const result = await db.query("SELECT files.title, files.description, files.type, files.description,\
+		                            files.uploadedon, file_stats.download_count, file_stats.email_count\
+                                    FROM\
+	                                files\
+                                    INNER JOIN file_stats ON\
+	                                files.id = file_stats.file_id")
     .catch(e =>{console.log("Error getting file statistics", e)})
     return result;
 }

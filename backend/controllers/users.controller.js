@@ -20,11 +20,12 @@ router.post('/signup', async (req, res) => {
 }) 
 
 // Login
-router.post('/login/:email', async (req, res) => {
+router.get('/login/:email/:password', async (req, res) => {
     try {
         const email = req.params.email;
-        const result = await service.logIn(email, req.body);
-        console.log(result);
+        const password = req.params.password
+        const result = await service.logIn(email, password);
+        // console.log(result);
     res.status(200).send(result);
     } catch (error) {
         res.status(400).send(error);
@@ -80,5 +81,16 @@ router.post('/verify-otp', async(req, res) => {
     res.status(200).send({verified: `${response}`})
 })
 
+// Delte User
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        userId = req.params.id;
+        const response = await service.deleteUser(userId);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+    
+})
 
 module.exports = router;

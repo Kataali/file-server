@@ -24,18 +24,25 @@ var upload = multer({storage: storage});
 
 // Upload file
 router.post("/file-upload", upload.single('file'), async (req, res) => {
-    console.log(req.file);
-    console.log(req.body);
-    const result = await service.uploadFile(req.body, req.file);
-    res.status(200).send(result);
+    try {
+        // const dbPath = req.file.filename;
+        const result = await service.uploadFile(req.body, req.file);
+        const fileId = await service.getFileByPath(result);
+        // console.log(fileId);
+        const res = await statService.initFileStats(fileId);
+        res.status(200).send(result);
+    } catch (error) {
+        
+    }
+    
 })
 
 
 // Get all files
 router.get("/all", async(req, res) => {
-    const users = await service.getFiles();
-    console.log(users.rows);
-    res.send(users.rows);
+    const files = await service.getFiles();
+    // console.log(users.rows);
+    res.send(files.rows);
 })
 
 // Download file
@@ -63,16 +70,17 @@ router.get("/all", async(req, res) => {
 // })
 
 // Download file
-router.get('/download/:path', async (req, res) => {
+router.get('/download/:path/:fileId', async (req, res) => {
     const filePath = req.params.path;
+    const fileId = req.params.fileId;
     const rootPath = path.join(__dirname, "../files/");
     // Increment DOwnload count
-    await statService.incrementDownloadCount(filePath);
+    await statService.incrementDownloadCount(fileId);
     // Download
     res.download(`${rootPath}${filePath}`, async (err) => {
         if (err) {
             // Decrement Download count
-            await statService.decrementDownloadCount(filePath);
+            await statService.decrementDownloadCount(fileId);
             console.log("There was a problem downloading file", err);
         }
         else
@@ -88,13 +96,15 @@ router.post("/mail/:path", async(req, res) => {
     const email = req.body.email;
     const path = req.params.path;
     const title = req.body.title;
+    const fileId = req.body.fileId;
     try {
         // Increment emails sent
-    await statService.incrementEmailsSent(path);
+    await statService.incrementEmailsSent(fileId);
         var result = await service.emailFile(email, path, title);
         res.status(200).send({message: `File sent to ${email} successfully`},);
     } catch (error) {
-        await statService.decrementEmailsSent(path);
+        // Decrement Emails sent if they are not zero
+        await statService.decrementEmailsSent(fileId);
     }
     
 })
@@ -106,11 +116,5 @@ router.get("/search/:keyword", async(req, res) => {
     res.status(200).send(searchResults);
 })
 
-router.get("/download-stats/:filePath", async (req, res) => {
-    const filePath = req.params.filePath;
-    const results = await statService.incrementDownloadCount(filePath);
-    await statService.incrementEmailsSent(filePath);
-    res.send(results);
-})
 
 module.exports = router;

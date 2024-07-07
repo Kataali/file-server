@@ -1,3 +1,4 @@
+import 'package:file_server/pages/update_password.dart';
 import 'package:file_server/pages/upload.dart';
 import 'package:file_server/pages/admin_nav.dart';
 import 'package:file_server/pages/file_email.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
       UploadFilePage.routeName: (context) => const UploadFilePage(),
       AdminNavPage.routeName: (context) => const AdminNavPage(),
       FileStatsPage.routeName: (context) => const FileStatsPage(),
+      UpdatePasswordPage.routeName: (context) => const UpdatePasswordPage(),
     };
   }
 }

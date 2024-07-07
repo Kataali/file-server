@@ -1,25 +1,27 @@
 import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
-import 'package:file_server/pages/login.dart';
-import 'package:file_server/widgets/button.dart';
+import 'package:file_server/providers/user.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
+import '../widgets/button.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/snackbar.dart';
 
-class ResetPasswordPage extends StatefulWidget {
-  static const routeName = '/reset-password';
-  const ResetPasswordPage({super.key});
+class UpdatePasswordPage extends StatefulWidget {
+  static const routeName = '/update-password';
+  const UpdatePasswordPage({super.key});
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  State<UpdatePasswordPage> createState() => _UpdatePasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
+  TextEditingController currentPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -29,10 +31,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
-    var args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String?>?;
-    final String? email = args?["email"];
-    // print(email);
+    var provider = Provider.of<UserData>(context, listen: false);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -52,11 +51,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Reset Password',
+                        'Change Password',
                         style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
                             color: color.secondary),
+                      ),
+                      const Divider(
+                        height: 30,
+                        thickness: .001,
+                      ),
+                      CustomTextField(
+                        hintText: "Current Password",
+                        controller: currentPasswordController,
+                        prefixIcon: const Icon(Icons.password_outlined),
+                        obscure: true,
                       ),
                       const Divider(
                         height: 30,
@@ -94,39 +103,46 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               setState(() {
                                 isLoading = true;
                               });
+                              final String currentPassword =
+                                  currentPasswordController.value.text.trim();
                               final String newPassword =
                                   newPasswordController.value.text.trim();
                               final String confirmPassword =
                                   confirmPasswordController.value.text.trim();
+                              final String email = provider.userEmail;
                               if (!_formKey.currentState!.validate()) {
                                 return;
                               } else {
                                 if (newPassword == confirmPassword) {
-                                  if (await resetPassword(email, newPassword)) {
+                                  if (await updatePassword(
+                                      email, newPassword, currentPassword)) {
                                     if (context.mounted) {
                                       CustomSnackbar.show(context,
-                                          "Password Reset Successfully");
-                                      Navigator.pushNamed(
-                                          context, LoginPage.routeName);
+                                          "Password Changed Successfully");
+                                      Navigator.pop(context);
+                                    }
+                                  } else {
+                                    if (context.mounted) {
+                                      CustomSnackbar.show(context,
+                                          "The Current Password you Entered is Wrong. Try Again");
                                     }
                                   }
                                 } else {
                                   if (context.mounted) {
-                                    CustomSnackbar.show(
-                                        context, "Passwords do not Match");
-                                    
+                                    CustomSnackbar.show(context,
+                                        "Passwords do not Match. Try Again");
                                   }
                                 }
+                                setState(() {
+                                  isLoading = false;
+                                });
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                CustomSnackbar.show(
-                                    context, "Error Resetting Password");
+                                CustomSnackbar.show(context,
+                                    "There was an error Changing Password");
                               }
                             }
-                            setState(() {
-                              isLoading = false;
-                            });
                           }
                         },
                       )
@@ -141,22 +157,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 
-  Future<bool> resetPassword(email, password) async {
+  Future<bool> updatePassword(email, newPassword, currentPassword) async {
     final res = await http.put(
-      Uri.parse("$serverEndPoint/reset-password/$email"),
+      Uri.parse("$serverEndPoint/update-password/$email"),
       headers: {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(
-        {
-          "newPassword": password,
-        },
+        {"newPassword": newPassword, "enteredPassword": currentPassword},
       ),
     );
-    // print(res.body);
-    if (res.statusCode == 200) {
-      return true;
-    }
+    if (res.statusCode == 200) return true;
     return false;
   }
 }

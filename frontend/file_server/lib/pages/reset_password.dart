@@ -65,6 +65,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       hintText: "NewPassword",
                       controller: newPasswordController,
                       prefixIcon: const Icon(Icons.password_outlined),
+                      obscure: true,
                     ),
                     const Divider(
                       height: 30,
@@ -74,6 +75,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       hintText: "Confirm Password",
                       controller: confirmPasswordController,
                       prefixIcon: const Icon(Icons.password_outlined),
+                      obscure: true,
                     ),
                     const Divider(
                       height: 130,
@@ -92,7 +94,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             return;
                           } else {
                             if (newPassword == confirmPassword) {
-                              if (await resetPassword(newPassword, email)) {
+                              if (await resetPassword(email, newPassword)) {
                                 if (context.mounted) {
                                   CustomSnackbar.show(
                                       context, "Password Reset Successfully");

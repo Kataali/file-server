@@ -8,6 +8,9 @@ module.exports.uploadFile = async(obj, chosenFile) => {
     const file = chosenFile;
     const title = obj.title.trim();
     const description = obj.description.trim();
+    console.log(file);
+    console.log(title);
+    console.log(description);
     const response = await db.query("INSERT into files(title, type, description, uploadedOn, file) VALUES($1, $2, $3, CURRENT_TIMESTAMP, $4)", [title, path.extname(file.filename), description, file.filename])
         .catch(e => {
             throw "database query error";

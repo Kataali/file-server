@@ -24,7 +24,8 @@ module.exports.addUser = async (obj) => {
 module.exports.logIn = async(email, obj) => {
     const password = obj.password;
     const response = await db.query("SELECT * FROM users WHERE email = $1", [email])
-        .catch(e => { throw "database query error" });
+        .catch(e => { console.log(e); throw "database query error" });
+    // console.log(response);
         if (response.rows.length > 0){
             const hashedPassword = response.rows[0].password;
             if(bcrypt.compareSync(password, hashedPassword)){
@@ -34,7 +35,6 @@ module.exports.logIn = async(email, obj) => {
                 throw "Failed to login";
         }else
             throw "Account not found";
-        
 }
 
 

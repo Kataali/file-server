@@ -1,5 +1,6 @@
 import 'package:file_server/constants/app_routes.dart';
 import 'package:file_server/constants/theme_data.dart';
+import 'package:file_server/pages/admin_nav.dart';
 import 'package:file_server/pages/file_email.dart';
 import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/login.dart';
@@ -35,7 +36,7 @@ class FileServerApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: themeData(),
         routes: AppRoutes.getRoutes(),
-        home: const LoginPage(),
+        home: const AdminNavPage(),
       ),
     );
   }

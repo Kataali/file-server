@@ -1,4 +1,7 @@
+import 'package:file_server/pages/upload.dart';
+import 'package:file_server/pages/admin_nav.dart';
 import 'package:file_server/pages/file_email.dart';
+import 'package:file_server/pages/file_stats.dart';
 import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/forgot_password.dart';
 import 'package:file_server/pages/login.dart';
@@ -20,6 +23,9 @@ class AppRoutes {
       FileEmailPage.routeName: (context) => const FileEmailPage(),
       SearchPage.routeName: (context) => const SearchPage(),
       ResetPasswordPage.routeName: (context) => const ResetPasswordPage(),
+      UploadFilePage.routeName: (context) => const UploadFilePage(),
+      AdminNavPage.routeName: (context) => const AdminNavPage(),
+      FileStatsPage.routeName: (context) => const FileStatsPage(),
     };
   }
 }

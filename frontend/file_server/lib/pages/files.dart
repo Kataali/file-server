@@ -37,19 +37,11 @@ class _HomePageViewState extends State<HomePageView> {
     "Download",
     "Send as Email"
   ];
-  // List<String> titles = ["Title 1", "Title 2", "Title 3"];
-  // List<String> types = ['png', 'jpg', 'pdf'];
-  // List<String> descriptions = ['PNG file', 'JPG file', 'PDF file'];
   bool isLoading = false;
   final TextEditingController searchController = TextEditingController();
   final String serverEndpoint = Api.filesEndpoint;
   late List<File> files;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,113 +159,39 @@ class _HomePageViewState extends State<HomePageView> {
                   height: 30,
                   thickness: .001,
                 ),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: FutureBuilder(
-                //           future: getFiles(),
-                //           builder: (context, snapshot) {
-                //             return DataTable(
-                //               headingTextStyle: TextStyle(
-                //                   fontWeight: FontWeight.bold,
-                //                   fontStyle: FontStyle.italic,
-                //                   color: color.onPrimary),
-                //               headingRowColor:
-                //                   WidgetStateProperty.all(color.primary),
-                //               dataTextStyle: TextStyle(color: color.secondary),
-                //               columns: List.generate(
-                //                 cols.length,
-                //                 (index) => DataColumn(
-                //                   label: Text(
-                //                     cols[index],
-                //                   ),
-                //                 ),
-                //               ),
-
-                //               rows: List.generate(
-                //                 titles.length,
-                //                 (index) {
-                //                   return DataRow(cells: <DataCell>[
-                //                     DataCell(
-                //                       Text(titles[index]),
-
-                //                     ),
-                //                     DataCell(
-                //                       Text(types[index]),
-                //                     ),
-                //                     DataCell(
-                //                       Text(
-                //                         descriptions[index],
-                //                       ),
-                //                     ),
-                //                     DataCell(
-                //                       Text(DateTime.now().toString()),
-                //                     ),
-                //                     DataCell(
-                //                       IconButton(
-                //                         onPressed: () {
-                //                           print("Download ${titles[index]}");
-                //                         },
-                //                         icon: Container(
-                //                             decoration: ShapeDecoration(
-                //                               shape: RoundedRectangleBorder(
-                //                                 borderRadius:
-                //                                     BorderRadius.circular(5),
-                //                                 side:
-                //                                     const BorderSide(width: 0.5),
-                //                               ),
-                //                               // color: color.tertiary,
-                //                             ),
-                //                             padding: const EdgeInsets.all(3),
-                //                             margin:
-                //                                 const EdgeInsets.only(right: 7),
-                //                             child: const Icon(
-                //                                 Icons.download_outlined)),
-                //                       ),
-                //                     ),
-                //                     DataCell(
-                //                       IconButton(
-                //                         onPressed: () {
-                //                           print("Email  ${titles[index]}");
-                //                         },
-                //                         icon: Container(
-                //                             decoration: ShapeDecoration(
-                //                               shape: RoundedRectangleBorder(
-                //                                 borderRadius:
-                //                                     BorderRadius.circular(5),
-                //                                 side: const BorderSide(width: 1),
-                //                               ),
-                //                             ),
-                //                             padding: const EdgeInsets.all(3),
-                //                             margin:
-                //                                 const EdgeInsets.only(right: 7),
-                //                             child:
-                //                                 const Icon(Icons.email_outlined)),
-                //                       ),
-                //                     ),
-                //                   ]);
-                //                 },
-                //               ),
-                //             );
-                //           }),
-                //     ),
-                //   ],
-                // ),
-                provider.filesLength != 0
-                    ? Row(
-                        children: [
-                          Expanded(
-                            child: Consumer<FileData>(builder:
-                                (BuildContext context, FileData value,
-                                    Widget? child) {
+                Row(
+                  children: [
+                    Expanded(
+                      child: FutureBuilder(
+                          future: getFiles(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data!.isEmpty) {
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.file_upload_off,
+                                        size: 300,
+                                      ),
+                                      Text(
+                                        "OOps!! No Uploads Yet",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: color.onSecondary),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                               return FittedBox(
-                                fit: BoxFit.contain,
                                 child: DataTable(
                                   headingTextStyle: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.italic,
                                       color: color.onPrimary),
-                                  columnSpacing: 20,
                                   headingRowColor:
                                       WidgetStateProperty.all(color.primary),
                                   dataTextStyle:
@@ -287,10 +205,9 @@ class _HomePageViewState extends State<HomePageView> {
                                     ),
                                   ),
                                   rows: List.generate(
-                                    provider.filesLength,
+                                    snapshot.data!.length,
                                     (index) {
-                                      File file =
-                                          provider.getFileByIndex(index);
+                                      final file = snapshot.data![index];
                                       return DataRow(cells: <DataCell>[
                                         DataCell(
                                           Text(file.title),
@@ -352,8 +269,8 @@ class _HomePageViewState extends State<HomePageView> {
                                                     const EdgeInsets.all(3),
                                                 margin: const EdgeInsets.only(
                                                     right: 7),
-                                                child: const Icon(Icons
-                                                    .file_download_outlined)),
+                                                child: const Icon(
+                                                    Icons.download_outlined)),
                                           ),
                                         ),
                                         DataCell(
@@ -370,21 +287,21 @@ class _HomePageViewState extends State<HomePageView> {
                                               // print("Email  ${file.title}");
                                             },
                                             icon: Container(
-                                              decoration: ShapeDecoration(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  side: const BorderSide(
-                                                      width: 1),
+                                                decoration: ShapeDecoration(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    side: const BorderSide(
+                                                        width: 1),
+                                                  ),
                                                 ),
-                                              ),
-                                              padding: const EdgeInsets.all(3),
-                                              margin: const EdgeInsets.only(
-                                                  right: 7),
-                                              child: const Icon(
-                                                Icons.email_outlined,
-                                              ),
-                                            ),
+                                                padding:
+                                                    const EdgeInsets.all(3),
+                                                margin: const EdgeInsets.only(
+                                                    right: 7),
+                                                child: const Icon(
+                                                    Icons.email_outlined)),
                                           ),
                                         ),
                                       ]);
@@ -392,27 +309,14 @@ class _HomePageViewState extends State<HomePageView> {
                                   ),
                                 ),
                               );
-                            }),
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                           ),
                         ],
-                      )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.file_upload_off,
-                              size: 300,
-                            ),
-                            Text(
-                              "OOps!! No Uploads Yet",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18, color: color.onSecondary),
-                            ),
-                          ],
-                        ),
-                      ),
+                )
               ],
             )),
       ),

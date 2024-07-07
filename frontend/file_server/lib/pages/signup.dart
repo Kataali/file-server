@@ -141,9 +141,12 @@ class _SingUpPageState extends State<SingUpPage> {
                                       Navigator.pushNamed(
                                           context, OtpPage.routeName,
                                           arguments: UserArgs(
-                                            email: emailController.value.text,
+                                            email: emailController.value.text
+                                                .trim(),
                                             password:
-                                                passwordController.value.text,
+                                                passwordController
+                                                .value.text
+                                                .trim(),
                                           ));
                                     }
                                   } else {
@@ -183,7 +186,7 @@ class _SingUpPageState extends State<SingUpPage> {
   }
 
   Future<bool> sendOtp() async {
-    String email = emailController.value.text;
+    String email = emailController.value.text.trim();
     final res = await http.post(
       Uri.parse("$serverEndPoint/send-otp"),
       headers: {

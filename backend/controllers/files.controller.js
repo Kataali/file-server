@@ -23,7 +23,9 @@ var upload = multer({storage: storage});
 
 
 // Upload file
-router.post("/file-upload", upload.single('file'), async(req, res) => {
+router.post("/file-upload", upload.single('file'), async (req, res) => {
+    console.log(req.file);
+    console.log(req.body);
     const result = await service.uploadFile(req.body, req.file);
     res.status(200).send(result);
 })

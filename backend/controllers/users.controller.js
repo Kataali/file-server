@@ -12,7 +12,7 @@ var otp = 0;
 router.post('/signup', async (req, res) => {
     try {
         const result = await service.addUser(req.body)
-    res.status(200).send(result)
+    res.send(result)
     // res.send(result)
     } catch (error) {
         res.status(400).send(error);
@@ -22,9 +22,10 @@ router.post('/signup', async (req, res) => {
 // Login
 router.post('/login/:email', async (req, res) => {
     try {
-        const {email} = req.params;
-    const result = await service.logIn(email, req.body);
-    res.satus(200).send({"message": result});
+        const email = req.params.email;
+        const result = await service.logIn(email, req.body);
+        console.log(result);
+    res.status(200).send(result);
     } catch (error) {
         res.status(400).send(error);
     }   
@@ -35,7 +36,7 @@ router.put('/reset-password/:email', async (req, res) => {
     try {
         const email = req.params.email;
         const result = await service.resetPassword(req.body, email);
-        res.status(200).send({"message": result});
+        res.status(200).send(result);
     } catch (error) {
         res.status(400).send(error);
     }

@@ -1,41 +1,34 @@
-import 'package:file_server/pages/files.dart';
-import 'package:file_server/pages/manage_account.dart';
-import 'package:file_server/pages/search.dart';
-import 'package:file_server/widgets/app_bar.dart';
-import 'package:file_server/widgets/custom_textfield.dart';
+import 'package:file_server/pages/upload.dart';
+import 'package:file_server/pages/file_stats.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import '../models/api_model.dart';
-
-class HomePage extends StatefulWidget {
-  static const routeName = '/home';
-
-  const HomePage({super.key});
+class AdminNavPage extends StatefulWidget {
+  static const routeName = '/admin-nav';
+  const AdminNavPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AdminNavPage> createState() => _AdminNavPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AdminNavPageState extends State<AdminNavPage> {
   int _selectedIndex = 0;
 
   final List<NavigationRailDestination> _destinations = [
     const NavigationRailDestination(
       padding: EdgeInsets.symmetric(vertical: 20),
-      icon: Icon(
-        Icons.dashboard_outlined,
-      ),
-      label: Text("Files"),
-      selectedIcon: Icon(
-        Icons.dashboard,
-      ),
+      icon: Icon(Icons.bar_chart_outlined),
+      label: Text("Stats"),
+      selectedIcon: Icon(Icons.bar_chart),
     ),
     const NavigationRailDestination(
       padding: EdgeInsets.symmetric(vertical: 20),
-      icon: Icon(Icons.manage_accounts_outlined),
-      label: Text("Manage \nAccount"),
-      selectedIcon: Icon(Icons.manage_accounts),
+      icon: Icon(
+        Icons.upload_file_outlined,
+      ),
+      label: Text("Upload \nFiles"),
+      selectedIcon: Icon(
+        Icons.upload_file,
+      ),
     ),
   ];
 
@@ -46,11 +39,9 @@ class _HomePageState extends State<HomePage> {
 
     switch (_selectedIndex) {
       case 0:
-        return const HomePageView();
+        return const FileStatsPage();
       case 1:
-        return const ManageAccountPage();
-      case 2:
-        return const SearchPage();
+        return const UploadFilePage();
       default:
         return const Text("No Such Destination");
     }

@@ -225,9 +225,10 @@ class _LoginPageState extends State<LoginPage> {
         {"password": password},
       ),
     );
+    print(res.body);
     if (res.statusCode == 200) {
       final resData = jsonDecode(res.body);
-      final User user = User.fromJson(resData["message"][0]);
+      final User user = User.fromJson(resData[0]);
       if (context.mounted) {
         Provider.of<UserData>(context, listen: false).getUser(user);
       }

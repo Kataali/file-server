@@ -1,27 +1,27 @@
 import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
-import 'package:file_server/models/user_args.dart';
-import 'package:file_server/pages/opt.dart';
+import 'package:file_server/pages/login.dart';
 import 'package:file_server/widgets/button.dart';
-import 'package:file_server/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
+import '../widgets/custom_textfield.dart';
 import '../widgets/snackbar.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
-  static const routeName = '/forgot-password';
-  const ForgotPasswordPage({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  static const routeName = '/reset-password';
+  const ResetPasswordPage({super.key});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final TextEditingController emailController = TextEditingController();
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   final String serverEndPoint = Api.userEndpoint;
@@ -29,6 +29,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
+    var args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, String?>?;
+    final String? email = args?["email"];
+    // print(email);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -46,7 +51,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Forgot Password',
+                      'Reset Password',
                       style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
@@ -57,47 +62,50 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       thickness: .001,
                     ),
                     CustomTextField(
-                      hintText: "Email Address",
-                      controller: emailController,
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      hintText: "NewPassword",
+                      controller: newPasswordController,
+                      prefixIcon: const Icon(Icons.password_outlined),
+                    ),
+                    const Divider(
+                      height: 30,
+                      thickness: .001,
+                    ),
+                    CustomTextField(
+                      hintText: "Confirm Password",
+                      controller: confirmPasswordController,
+                      prefixIcon: const Icon(Icons.password_outlined),
                     ),
                     const Divider(
                       height: 130,
                       thickness: .001,
                     ),
                     MyButton(
-                        text: "Proceed",
+                        text: "Reset Password",
                         onPressed: () async {
                           SystemChannels.textInput
                               .invokeMethod<void>('TextInput.hide');
-                          final String email =
-                              emailController.value.text.trim();
+                          final String newPassword =
+                              newPasswordController.value.text.trim();
+                          final String confirmPassword =
+                              confirmPasswordController.value.text.trim();
                           if (!_formKey.currentState!.validate()) {
                             return;
                           } else {
-                            try {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              if (await sendOtp()) {
+                            if (newPassword == confirmPassword) {
+                              if (await resetPassword(newPassword, email)) {
                                 if (context.mounted) {
+                                  CustomSnackbar.show(
+                                      context, "Password Reset Successfully");
                                   Navigator.pushNamed(
-                                    context,
-                                    OtpPage.routeName,
-                                    arguments:
-                                        UserArgs(email: email, password: null),
-                                  );
-                                }
-                              } else {
-                                if (context.mounted) {
-                                  CustomSnackbar.show(context,
-                                      "Check Connection and Try Again");
+                                      context, LoginPage.routeName);
                                 }
                               }
-                            } catch (e) {
+                            } else {
                               if (context.mounted) {
                                 CustomSnackbar.show(
-                                    context, "Check Connection and Try Again");
+                                    context, "Passwords do not Match");
+                                // Navigator.pushNamed(
+                                //     context, LoginPage.routeName);
                               }
                             }
                           }
@@ -112,18 +120,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<bool> sendOtp() async {
-    String email = emailController.value.text;
-    final res = await http.post(
-      Uri.parse("$serverEndPoint/send-otp"),
+  Future<bool> resetPassword(email, password) async {
+    final res = await http.put(
+      Uri.parse("$serverEndPoint/reset-password/$email"),
       headers: {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(
-        {"email": email},
+        {
+          "newPassword": password,
+        },
       ),
     );
-    // print(res.body);
+    print(res.body);
     if (res.statusCode == 200) {
       return true;
     }

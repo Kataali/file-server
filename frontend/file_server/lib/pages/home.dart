@@ -1,5 +1,6 @@
 import 'package:file_server/pages/files.dart';
 import 'package:file_server/pages/manage_account.dart';
+import 'package:file_server/pages/search.dart';
 import 'package:file_server/widgets/app_bar.dart';
 import 'package:file_server/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,12 @@ class _HomePageState extends State<HomePage> {
       label: Text("Manage \nAccount"),
       selectedIcon: Icon(Icons.manage_accounts),
     ),
-    const NavigationRailDestination(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      icon: Icon(Icons.logout_outlined),
-      label: Text("Logout"),
-      selectedIcon: Icon(Icons.logout),
-    ),
+    // const NavigationRailDestination(
+    //   padding: EdgeInsets.symmetric(vertical: 20),
+    //   icon: Icon(Icons.logout_outlined),
+    //   label: Text("Logout"),
+    //   selectedIcon: Icon(Icons.logout),
+    // ),
     // const NavigationRailDestination(
     //   padding: EdgeInsets.symmetric(vertical: 20),
     //   icon: Icon(Icons.monetization_on_outlined),
@@ -66,8 +67,8 @@ class _HomePageState extends State<HomePage> {
         return const HomePageView();
       case 1:
         return const ManageAccountPage();
-      // case 2:
-      //   Navigator.pushNamed(context, LoginPage.routeName);
+      case 2:
+        return const SearchPage();
       // case 3:
       //   return const RevenueView();
       default:

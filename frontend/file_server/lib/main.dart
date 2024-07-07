@@ -4,6 +4,7 @@ import 'package:file_server/pages/file_email.dart';
 import 'package:file_server/pages/home.dart';
 import 'package:file_server/pages/login.dart';
 import 'package:file_server/pages/opt.dart';
+import 'package:file_server/pages/reset_password.dart';
 import 'package:file_server/pages/signup.dart';
 import 'package:file_server/providers/file.provider.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class FileServerApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: themeData(),
         routes: AppRoutes.getRoutes(),
-        home: const HomePage(),
+        home: const LoginPage(),
       ),
     );
   }

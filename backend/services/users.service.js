@@ -1,6 +1,7 @@
 const db = require("../databasepg");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const nodemailer = require("nodemailer");
 
 // Insert new user into database
 module.exports.addUser = async (obj) => {
@@ -66,9 +67,22 @@ module.exports.updatePassword = async(obj, email) => {
     }
     else
         throw "Invalid Password";
+}
 
-
-    
+// Reset Password
+module.exports.resetPassword = async (obj, email) => {
+    const newPassword = obj.newPassword.trim();
+    console.log(newPassword);
+    console.log(email);
+    bcrypt.hash(newPassword, saltRounds, async (err, hashedPassword) => {
+            if (err) {
+                throw "Error Hashing Password";
+            }
+            const response = await db.query("UPDATE users SET password = $1 WHERE email = $2", [hashedPassword, email])
+            .catch(e => { throw "database query error" });
+            console.log(response)
+            return response;
+        })
 }
 
 // Verify Password
@@ -85,3 +99,42 @@ module.exports.verifyPassword = async (enteredPassword, currentPassword, email) 
     return false;
 }
 
+// Send OTP
+module.exports.sendOtp = async(obj) => {
+    email = obj.email
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: "muhammadismaaiil360@gmail.com",
+            pass: "yikl mmak mmmb zfde"
+        }
+      });
+      
+    const otpCode = Math.floor(1000 + Math.random() * 9000);
+    const mailOptions = {
+        from: "muhammadismaaiil360@gmail.com",
+        to: email,
+        subject: "Amali File Server",
+        text: `Your OTP code is ${otpCode}.`,
+    };
+
+    await transporter.sendMail(mailOptions)
+    .catch(error => {
+            console.log(error)
+            throw error;
+        })
+        return otpCode;
+}
+
+// Verify OTP
+module.exports.verifyOtp = async(otp, obj) =>{
+    const code = parseInt(obj.code)
+    try {
+        if(code === otp){
+        return true;
+    }
+    } catch (error) {
+        throw error;
+    }
+    return false; 
+}

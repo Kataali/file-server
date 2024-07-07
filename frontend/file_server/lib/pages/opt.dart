@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:file_server/pages/login.dart';
+import 'package:file_server/pages/reset_password.dart';
 import 'package:file_server/widgets/otp_text_field.dart';
 import 'package:file_server/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
 import '../models/user_args.dart';
@@ -38,7 +42,7 @@ class _OtpPageState extends State<OtpPage> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
-    final args = ModalRoute.of(context)!.settings.arguments as UserArgs?;
+    var args = ModalRoute.of(context)!.settings.arguments as UserArgs?;
     final String? email = args?.email;
     final String? password = args?.password;
 
@@ -90,7 +94,7 @@ class _OtpPageState extends State<OtpPage> {
                           children: [
                             TextSpan(
                               text:
-                                  "\n\n\nPlease check the inbox or spam folder and enter the code that was sent below to complete Registration",
+                                  "\n\n\nPlease check the inbox or spam folder and enter the code that was sent below to continue",
                               style: TextStyle(
                                 letterSpacing: 2,
                                 color: color.secondary,
@@ -169,24 +173,32 @@ class _OtpPageState extends State<OtpPage> {
                                     secondController.value.text +
                                     thirdController.value.text +
                                     fourthController.value.text;
-
                                 setState(() {
                                   isLoading = true;
                                 });
-
                                 if (await verifyOtp(code)) {
                                   try {
-                                    if (await addUser(email, password)) {
+                                    if (password == null) {
                                       if (context.mounted) {
-                                        CustomSnackbar.show(
-                                            context, "Registration Successful");
                                         Navigator.pushNamed(
-                                            context, LoginPage.routeName);
+                                          context,
+                                          ResetPasswordPage.routeName,
+                                          arguments: {"email": email},
+                                        );
                                       }
                                     } else {
-                                      if (context.mounted) {
-                                        CustomSnackbar.show(context,
-                                            "User Registration Failed");
+                                      if (await addUser(email, password)) {
+                                        if (context.mounted) {
+                                          CustomSnackbar.show(context,
+                                              "Registration Successful");
+                                          Navigator.pushNamed(
+                                              context, LoginPage.routeName);
+                                        }
+                                      } else {
+                                        if (context.mounted) {
+                                          CustomSnackbar.show(context,
+                                              "User Registration Failed");
+                                        }
                                       }
                                     }
                                   } catch (e) {
@@ -234,11 +246,48 @@ class _OtpPageState extends State<OtpPage> {
     );
   }
 
+  // Verify OTP code
   Future<bool> verifyOtp(code) async {
-    return false;
+    final res = await http.post(
+      Uri.parse("$serverEndPoint/verify-otp"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(
+        {
+          "code": code,
+        },
+      ),
+    );
+    if (res.statusCode == 200) {
+      final resData = jsonDecode(res.body);
+      final String verified = resData['verified'];
+      if (verified == "true") {
+        return true;
+      }
+      return false;
+    } else {
+      throw Exception("Failed to login.");
+    }
   }
 
+  // Register User
   Future<bool> addUser(email, password) async {
+    Map<String, String> user = {
+      'email': email,
+      'password': password,
+    };
+
+    final res = await http.post(
+      Uri.parse("$serverEndPoint/signup"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(user),
+    );
+    if (res.statusCode == 200) {
+      return true;
+    }
     return false;
   }
 }

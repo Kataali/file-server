@@ -26,7 +26,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       validator: (value) {
         if (value!.trim().isEmpty) {
-          return "Required Field missing";
+          return "This field cannot be empty";
         }
         return null;
       },
@@ -40,8 +40,8 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: color.onTertiary, width: 2.0),
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: color.onSecondary, width: 2.0),
+          borderRadius: BorderRadius.circular(5),
         ),
         hintText: hintText,
         hintStyle: TextStyle(

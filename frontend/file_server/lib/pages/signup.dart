@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:file_server/pages/opt.dart';
 import 'package:file_server/widgets/auth_text_field.dart';
@@ -5,6 +7,7 @@ import 'package:file_server/widgets/button.dart';
 import 'package:file_server/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
 import '../models/user_args.dart';
@@ -180,6 +183,20 @@ class _SingUpPageState extends State<SingUpPage> {
   }
 
   Future<bool> sendOtp() async {
-    return true;
+    String email = emailController.value.text;
+    final res = await http.post(
+      Uri.parse("$serverEndPoint/send-otp"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(
+        {"email": email},
+      ),
+    );
+    // print(res.body);
+    if (res.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 }

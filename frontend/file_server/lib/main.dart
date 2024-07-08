@@ -34,7 +34,7 @@ class FileServerApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: themeData(),
+        theme: themeData(context),
         routes: AppRoutes.getRoutes(),
         home: const LoginPage(),
       ),

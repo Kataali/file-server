@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
 module.exports.addUser = async (obj) => {
     const email = obj.email;
     const password = obj.password;
-    console.log(email, password);
+    // console.log(email, password);
     const id = (Date.now() * Math.random()).toString().substring(0, 10);
     bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
         if(err){

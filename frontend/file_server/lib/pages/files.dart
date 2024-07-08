@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:file_server/pages/file_email.dart';
 import 'package:file_server/pages/search.dart';
-import 'package:file_server/widgets/snackbar.dart';
+import 'package:file_server/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -51,7 +51,10 @@ class _HomePageViewState extends State<HomePageView> {
       child: Scaffold(
         appBar: const PreferredSize(
           preferredSize: Size(double.infinity, 70),
-          child: MyAppBar(title: "Library"),
+          child: MyAppBar(
+            title: "Library",
+            leading: SizedBox(),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -116,17 +119,17 @@ class _HomePageViewState extends State<HomePageView> {
                         ),
                       ),
                       const VerticalDivider(
-                        width: 15,
+                        width: 10,
                         thickness: .001,
                       ),
-                      ElevatedButton(
+                      IconButton(
                         onPressed: () async {
                           setState(() {
                             isLoading = true;
                           });
                           try {
                             files = await getFiles();
-                            // print(files);
+                            
                             provider.emptyVitalsList();
                             provider.mergeWithFilesList(files);
                           } catch (e) {
@@ -139,15 +142,19 @@ class _HomePageViewState extends State<HomePageView> {
                             isLoading = false;
                           });
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: color.primary,
+                        style: IconButton.styleFrom(
+                          backgroundColor: color.tertiary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        child: Text(
-                          "Get Files",
-                          style: TextStyle(color: color.onPrimary),
+                        // icon: Text(
+                        //   "Get Files",
+                        //   style: TextStyle(color: color.onPrimary),
+                        // ),
+                        icon: Icon(
+                          Icons.refresh_outlined,
+                          color: color.primary,
                         ),
                       )
                     ],

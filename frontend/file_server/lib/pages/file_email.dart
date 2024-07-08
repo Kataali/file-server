@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
 import '../widgets/app_bar.dart';
-import '../widgets/snackbar.dart';
+import '../utils/snackbar.dart';
 
 class FileEmailPage extends StatefulWidget {
   static const routeName = '/email-file';
@@ -46,7 +46,12 @@ class _FileEmailPageState extends State<FileEmailPage> {
           child: Center(
             child: Container(
               width: 700,
-              color: color.onPrimary,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                color: color.onPrimary,
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

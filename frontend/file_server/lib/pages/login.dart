@@ -4,17 +4,20 @@ import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:file_server/models/user.dart';
 import 'package:file_server/pages/forgot_password.dart';
 import 'package:file_server/pages/home.dart';
+import 'package:file_server/pages/landing.dart';
 import 'package:file_server/pages/signup.dart';
+import 'package:file_server/utils/dialog.dart';
 import 'package:file_server/widgets/button.dart';
 import 'package:file_server/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../models/api_model.dart';
 import '../providers/user.provider.dart';
-import '../widgets/snackbar.dart';
+import '../utils/snackbar.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -64,7 +67,12 @@ class _LoginPageState extends State<LoginPage> {
                     key: _formKey,
                     child: Center(
                       child: Container(
-                        color: color.onPrimary,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          color: color.onPrimary,
+                        ),
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         width: 700,
                         child: Column(
@@ -74,8 +82,8 @@ class _LoginPageState extends State<LoginPage> {
                                   const EdgeInsets.only(bottom: 30.0, top: 70),
                               child: Text(
                                 'Login',
-                                style: TextStyle(
-                                    fontSize: 26,
+                                style: GoogleFonts.playfairDisplay(
+                                    fontSize: 30,
                                     fontWeight: FontWeight.w500,
                                     color: color.secondary),
                               ),
@@ -174,12 +182,18 @@ class _LoginPageState extends State<LoginPage> {
                                 }
                               },
                               text: 'Login',
+                              leading: Icon(
+                                Icons.login_outlined,
+                                color: color.onPrimary,
+                                size: 30,
+                              ),
                             ),
                             const Divider(
                               height: 30,
                               thickness: .001,
                             ),
                             Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "Don't have an Account?",
@@ -196,11 +210,40 @@ class _LoginPageState extends State<LoginPage> {
                                   child: Text(
                                     "Sign Up",
                                     style: TextStyle(
-                                        color: color.onSecondary,
+                                        color: color.primary,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400),
                                   ),
+                                ),
+                                const VerticalDivider(
+                                  width: 50,
+                                  thickness: .001,
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, LandingPage.routeName);
+                                  },
+                                  child: Text(
+                                    "Back to Landing Page",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: color.onSecondary,
+                                    ),
+                                  ),
                                 )
+                                // TextButton(
+                                //     onPressed: () {
+                                //       CustomDialog.showPopUp(
+                                //           context,
+                                //           "Text",
+                                //           "Some content",
+                                //           "firstButtonText",
+                                //           null,
+                                //           () {},
+                                //           () {});
+                                //     },
+                                //     child: const Text("Test"))
                               ],
                             ),
                           ],
@@ -230,6 +273,9 @@ class _LoginPageState extends State<LoginPage> {
       }
       return true;
     } else {
+      if (res.body == "Account not found") {
+        throw "No Account found for this Email";
+      }
       return false;
     }
   }

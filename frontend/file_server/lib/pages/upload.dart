@@ -1,7 +1,7 @@
 
 import 'package:file_server/widgets/button.dart';
 import 'package:file_server/widgets/custom_textfield.dart';
-import 'package:file_server/widgets/snackbar.dart';
+import 'package:file_server/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
@@ -11,7 +11,7 @@ import '../models/api_model.dart';
 import '../widgets/app_bar.dart';
 
 class UploadFilePage extends StatefulWidget {
-  static const routeName = '/admin-home';
+  static const routeName = '/upload-file';
   const UploadFilePage({super.key});
 
   @override
@@ -31,12 +31,20 @@ class _UploadFilePage extends State<UploadFilePage> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size(double.infinity, 70),
-        child: MyAppBar(title: "Upload File"),
+        child: MyAppBar(
+          title: "Upload File",
+          leading: SizedBox(),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: color.onPrimary,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              color: color.onPrimary,
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 30),
             width: 700,
             child: Form(

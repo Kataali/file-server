@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
+import 'package:file_server/pages/login.dart';
 import 'package:file_server/pages/opt.dart';
 import 'package:file_server/widgets/auth_text_field.dart';
 import 'package:file_server/widgets/button.dart';
-import 'package:file_server/widgets/snackbar.dart';
+import 'package:file_server/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
@@ -57,7 +59,12 @@ class _SingUpPageState extends State<SingUpPage> {
                     key: _formKey,
                     child: Container(
                       width: 700,
-                      color: color.onPrimary,
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        color: color.onPrimary,
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,9 +74,9 @@ class _SingUpPageState extends State<SingUpPage> {
                                 const EdgeInsets.only(bottom: 30.0, top: 70),
                             child: Text(
                               'Register',
-                              style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w500,
+                              style: GoogleFonts.playfairDisplay(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w700,
                                   color: color.secondary),
                             ),
                           ),
@@ -179,8 +186,29 @@ class _SingUpPageState extends State<SingUpPage> {
                                 }
                               },
                               text: 'Register',
+                              leading: Icon(
+                                Icons.person_add_alt_1_outlined,
+                                color: color.onPrimary,
+                                size: 30,
+                              ),
                             ),
                           ),
+                          const Divider(
+                            height: 30,
+                            thickness: .001,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, LoginPage.routeName);
+                            },
+                            child: Text(
+                              "Back to Login Page",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: color.onSecondary,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),

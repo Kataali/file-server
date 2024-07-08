@@ -5,11 +5,12 @@ import 'package:file_server/pages/login.dart';
 import 'package:file_server/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/api_model.dart';
 import '../widgets/custom_textfield.dart';
-import '../widgets/snackbar.dart';
+import '../utils/snackbar.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   static const routeName = '/reset-password';
@@ -45,7 +46,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               key: _formKey,
               child: Center(
                 child: Container(
-                  color: color.onPrimary,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: color.onPrimary,
+                  ),
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   width: 700,
                   child: Column(
@@ -53,8 +59,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     children: [
                       Text(
                         'Reset Password',
-                        style: TextStyle(
-                            fontSize: 26,
+                        style: GoogleFonts.playfairDisplay(
+                            fontSize: 30,
                             fontWeight: FontWeight.w700,
                             color: color.secondary),
                       ),

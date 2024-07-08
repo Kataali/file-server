@@ -1,9 +1,10 @@
+import 'package:file_server/pages/manage_admin_account.dart';
 import 'package:file_server/pages/upload.dart';
 import 'package:file_server/pages/file_stats.dart';
 import 'package:flutter/material.dart';
 
 class AdminNavPage extends StatefulWidget {
-  static const routeName = '/admin-nav';
+  static const routeName = '/admin-home';
   const AdminNavPage({super.key});
 
   @override
@@ -30,6 +31,12 @@ class _AdminNavPageState extends State<AdminNavPage> {
         Icons.upload_file,
       ),
     ),
+    const NavigationRailDestination(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      icon: Icon(Icons.manage_accounts_outlined),
+      label: Text("Manage \nAccount"),
+      selectedIcon: Icon(Icons.manage_accounts),
+    ),
   ];
 
   Widget changeDestination(int index) {
@@ -42,6 +49,8 @@ class _AdminNavPageState extends State<AdminNavPage> {
         return const FileStatsPage();
       case 1:
         return const UploadFilePage();
+      case 2:
+        return const ManageAdminAccountPage();
       default:
         return const Text("No Such Destination");
     }

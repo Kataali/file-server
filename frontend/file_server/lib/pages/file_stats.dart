@@ -32,7 +32,10 @@ class _FileStatsPageState extends State<FileStatsPage> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size(double.infinity, 70),
-        child: MyAppBar(title: "File Statistics"),
+        child: MyAppBar(
+          title: "File Statistics",
+          leading: SizedBox(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

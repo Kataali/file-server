@@ -7,7 +7,8 @@ const myPostgresPool = new Client({
     user: process.env.PSQL_USER,
     port: process.env.PSQL_PORT,
     password: process.env.PSQL_PASSWORD,
-    database: process.env.PSQL_DATABASE
+    database: process.env.PSQL_DATABASE,
+    
 });
 
 module.exports = myPostgresPool

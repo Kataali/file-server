@@ -51,13 +51,13 @@ module.exports.emailFile = async(email, fileName, fileTitle) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.smtp_user,
-            pass: process.env.smtp_password
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD
         }
       });
       
     var mailOptions = {
-        from: process.env.smtp_user,
+        from: process.env.SMTP_USER,
         to: email,
         subject: "File Request",
         text: `The File you requested, ${fileTitle} is attached below.`,

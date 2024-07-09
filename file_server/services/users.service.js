@@ -105,14 +105,14 @@ module.exports.sendOtp = async(obj) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.smtp_user,
-            pass: process.env.smtp_password
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD
         }
       });
       
     const otpCode = Math.floor(1000 + Math.random() * 9000);
     const mailOptions = {
-        from: process.env.smtp_user,
+        from: process.env.SMTP_USER,
         to: email,
         subject: "Amali File Server",
         text: `Your OTP code is ${otpCode}.`,

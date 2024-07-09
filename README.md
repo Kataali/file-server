@@ -13,12 +13,12 @@ This a file server project that AmaliTech assigned to prospective National Servi
 - Upload files with a title and a description.
 - See the number of downloads and the number of emails sent for each file
 
-## I have been able to implement all the above and the following additional functionalities:
-# For Users:
+## Using Express with node.js and a Postgres database, I have been able to implement all the above and the following additional functionalities:
+### For Users:
 - Update password
 - Logout
 - Delete account
-# For the Admin:
+### For the Admin:
 - Login with a password
 - Update password
 - Logout

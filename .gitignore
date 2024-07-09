@@ -1,2 +1,4 @@
 file_server/.env
 file_server/new.js
+file_server/node_modules/
+file_server/files/

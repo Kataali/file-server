@@ -2,11 +2,11 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const client = require("./databasepg");
 const cors = require("cors");
-const multer = require('multer');
 const dotenv = require("dotenv");
 usersRoute = require("./controllers/users.controller");
 filesRoute = require("./controllers/files.controller");
 statsRoute = require("./controllers/stats.controller");
+adminRoute = require("./controllers/admin.controller");
 
 
 // Middleware
@@ -18,6 +18,7 @@ app.use(cors({allowedHeaders: ["Origin", 'X-Requested-With', 'Content-Type', 'Ac
 app.use('/amali-api/users', usersRoute);
 app.use('/amali-api/files', filesRoute);
 app.use('/amali-api/file-stats', statsRoute);
+app.use('/amali-api/admin', adminRoute);
 app.use(bodyparser.urlencoded({extended: true}));
 app.use('/files', express.static('files'));
 

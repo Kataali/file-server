@@ -1,7 +1,6 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("node:path");
-const cors = require("cors");
 
 router = express.Router();
 
@@ -28,11 +27,11 @@ router.post("/file-upload", upload.single('file'), async (req, res) => {
         // const dbPath = req.file.filename;
         const result = await service.uploadFile(req.body, req.file);
         const fileId = await service.getFileByPath(result);
-        // console.log(fileId);
-        const res = await statService.initFileStats(fileId);
-        res.status(200).send(result);
+        const response = await statService.initFileStats(fileId);
+        res.send(response);
     } catch (error) {
-        
+        console.log(error);
+        res.status(400).send(error);
     }
     
 })
@@ -46,35 +45,11 @@ router.get("/all", async(req, res) => {
 })
 
 // Download file
-// router.get("/download/:title", async(req, res) => {
-//     const filePath = path.join(__dirname, "../files/");
-//     const title = req.params.title;
-//     let dbFilePath = await service.getFileDbPath(title);
-//     if(dbFilePath){
-//         dbFilePath = dbFilePath["file"];
-
-//     // increase download count
-//     await statService.incrementDownloadCount(dbFilePath);
-
-    // // Download
-    // res.download(`${filePath}${dbFilePath}`, async (err) => {
-    //     if(err){
-    //         await statService.decrementDownloadCount(dbFilePath);
-    //         console.log("There was a problem downloading file", err);
-    //     }
-    //     else
-    //         console.log("Download completed");
-    // });
-    // }else
-    //     res.status(400).send("No file with that title");
-// })
-
-// Download file
 router.get('/download/:path/:fileId', async (req, res) => {
     const filePath = req.params.path;
     const fileId = req.params.fileId;
     const rootPath = path.join(__dirname, "../files/");
-    // Increment DOwnload count
+    // Increment Download count
     await statService.incrementDownloadCount(fileId);
     // Download
     res.download(`${rootPath}${filePath}`, async (err) => {
@@ -86,8 +61,6 @@ router.get('/download/:path/:fileId', async (req, res) => {
         else
             console.log("Download completed");
     });
-    // }else
-    // res.status(400).send("No file with that title");
 
 })
 

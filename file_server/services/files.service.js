@@ -9,20 +9,20 @@ module.exports.uploadFile = async(obj, chosenFile) => {
     const file = chosenFile;
     const title = obj.title.trim();
     const description = obj.description.trim();
-    const response = await db.query("INSERT into files(title, type, description, uploadedOn, file) VALUES($1, $2, $3, CURRENT_TIMESTAMP, $4)", [title, path.extname(file.filename), description, file.filename])
+    const response = await db.query("INSERT into files(title, type, description, uploaded_on, file) VALUES($1, $2, $3, CURRENT_TIMESTAMP, $4)", [title, path.extname(file.filename), description, file.filename])
         .catch(e => {
             throw "database query error";
-            
          });
     return file.filename;
 }
 
 // Get All Files from Database
 module.exports.getFiles = async() => {
-    const response = await db.query('SELECT * FROM files ORDER BY uploadedon ASC')
+    const response = await db.query("SELECT * FROM files ORDER BY uploaded_on DESC")
         .catch(e => {
             throw "database query error";
-    })
+        })
+    console.log(response.rows);
         return response;
 }
 
@@ -74,7 +74,7 @@ module.exports.emailFile = async(email, fileName, fileTitle) => {
 
 // Search database for keyword
 module.exports.searchForFile = async(keyword) => {
-    const response = await db.query(`SELECT * FROM files WHERE title LIKE $1 OR description LIKE $1`, [`%${keyword.trim()}%`])
+    const response = await db.query(`SELECT * FROM files WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY uploaded_on DESC`, [`%${keyword.trim()}%`])
         .catch(e => {
             throw ("Failed to search database" + e);   
         });

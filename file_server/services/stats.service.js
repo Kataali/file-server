@@ -28,7 +28,7 @@ module.exports.decrementEmailsSent = async(fileId) => {
     return result;
 }
 
-// init file stats
+// init file stats with email count and download count as zero
 module.exports.initFileStats = async (fileId) => {
     const response = await db.query("INSERT into file_stats(file_id, download_count, email_count) VALUES($1, 0, 0)", [fileId])
         .catch(e => { console.log("Error incrementing email count", e) });
@@ -38,11 +38,11 @@ module.exports.initFileStats = async (fileId) => {
 // Get stats for all files
 module.exports.getFileStats = async() => {
     const result = await db.query("SELECT files.title, files.description, files.type, files.description,\
-		                            files.uploadedon, file_stats.download_count, file_stats.email_count\
+		                            files.uploaded_on, file_stats.download_count, file_stats.email_count\
                                     FROM\
 	                                files\
                                     INNER JOIN file_stats ON\
-	                                files.id = file_stats.file_id")
+	                                files.id = file_stats.file_id ORDER BY uploaded_on DESC")
     .catch(e =>{console.log("Error getting file statistics", e)})
     return result;
 }

@@ -51,8 +51,7 @@ router.put('/update-password/:email', async (req, res) => {
     }
     catch (error) {
         res.status(400).send(error);
-    }
-    
+    } 
 })
 
 // Get all users

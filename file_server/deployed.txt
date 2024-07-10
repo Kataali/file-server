@@ -1,3 +1,4 @@
 
 Server deployed URL : https://dashboard.render.com/web/srv-cq6hhaaju9rs73e7ut6g/deploys/dep-cq6o1rbgbbvc73auipsg
 Deployed Api endpoint: https://file-server-backend-8zjh.onrender.com
+Link to client: https://668e82760149941ca8e9323f--vocal-daifuku-9ec2ea.netlify.app

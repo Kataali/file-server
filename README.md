@@ -23,6 +23,8 @@ This a file server project that AmaliTech assigned to prospective National Servi
 - Update password
 - Logout
 
+### The backend is live on render at [https://file-server-backend-8zjh.onrender.com]
+
 ## The Client App
-I also wrote a client web app with Flutter Web to demonstrate all these features
+I also wrote a client web app with Flutter Web to interact with the server and demonstrate all these features
 ### The Link to the Flutter application is [https://github.com/Kataali/file_server_client]

@@ -28,3 +28,4 @@ module.exports.updatePassword = async(obj) => {
         })
     
 }
+

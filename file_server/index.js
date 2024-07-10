@@ -22,6 +22,7 @@ app.use('/amali-api/admin', adminRoute);
 app.use(bodyparser.urlencoded({extended: true}));
 app.use('/files', express.static('files'));
 
+// port config
 const port = process.env.PORT || 3000;
 
 

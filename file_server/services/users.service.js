@@ -16,7 +16,10 @@ module.exports.addUser = async (obj) => {
             throw "Error Hashing Password";
         }
         const response = await db.query('INSERT INTO users(id, email, password) VALUES ($1, $2, $3)', [id, email, hashedPassword])
-            .catch(e => { throw "database query error" });
+            .catch(e => {
+                console.log(e);
+                // throw "database query error"
+            });
         return response;
     })
          

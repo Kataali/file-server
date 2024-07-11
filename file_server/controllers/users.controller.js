@@ -12,7 +12,13 @@ var otp = 0;
 router.post('/signup', async (req, res) => {
     try {
         const result = await service.addUser(req.body)
-    res.send(result)
+        // console.log(result);
+        // res.send(result);
+        if (result == undefined){
+            res.send("duplicate");
+        } else {
+            res.send(result);
+        }
     // res.send(result)
     } catch (error) {
         res.status(400).send(error);
@@ -70,7 +76,7 @@ router.post('/send-otp', async(req, res) => {
     var code = await service.sendOtp(req.body)
     .catch(e => {res.status(500).send({ message: 'Failed to send OTP' },)})
     otp = code
-    res.status(200).send({sentotp: `${code}`, message: 'OTP sent successfully'},);
+    res.send({sentotp: `${code}`, message: 'OTP sent successfully'},);
     // console.log(code);
 });
 

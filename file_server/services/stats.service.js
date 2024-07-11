@@ -37,12 +37,13 @@ module.exports.initFileStats = async (fileId) => {
 
 // Get stats for all files
 module.exports.getFileStats = async() => {
-    const result = await db.query("SELECT files.title, files.description, files.type, files.description,\
-		                            files.uploaded_on, file_stats.download_count, file_stats.email_count\
+    const result = await db.query("SELECT files.id, files.title, files.description, files.type, files.description,\
+		                            to_char(timezone('UTC', current_timestamp), 'YY-MM-DD HH24:MI:SS') as real_uploaded_on, file_stats.download_count, file_stats.email_count\
                                     FROM\
 	                                files\
                                     INNER JOIN file_stats ON\
-	                                files.id = file_stats.file_id ORDER BY uploaded_on DESC")
+	                                files.id = file_stats.file_id\
+                                    ORDER BY uploaded_on DESC")
     .catch(e =>{console.log("Error getting file statistics", e)})
     return result;
 }

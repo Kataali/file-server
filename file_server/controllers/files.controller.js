@@ -89,5 +89,16 @@ router.get("/search/:keyword", async(req, res) => {
     res.status(200).send(searchResults);
 })
 
+// Delte File
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        fileId = req.params.id;
+        const response = await service.deleteFile(fileId);
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+    
+})
 
 module.exports = router;

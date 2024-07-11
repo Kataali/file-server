@@ -18,11 +18,11 @@ module.exports.uploadFile = async(obj, chosenFile) => {
 
 // Get All Files from Database
 module.exports.getFiles = async() => {
-    const response = await db.query("SELECT * FROM files ORDER BY uploaded_on DESC")
+    const response = await db.query("SELECT *, to_char(timezone('UTC', current_timestamp), 'YY-MM-DD HH24:MI:SS') as real_uploaded_on  FROM files ORDER BY uploaded_on DESC")
         .catch(e => {
             throw "database query error";
         })
-    console.log(response.rows);
+    // console.log(response.rows);
         return response;
 }
 
@@ -81,4 +81,12 @@ module.exports.searchForFile = async(keyword) => {
         return response.rows;
 }
 
-// 
+// Delete File from Database 
+module.exports.deleteFile = async (fileId) => {
+     const response =  await db.query("DELETE FROM files WHERE id = $1", [fileId])
+         .catch(e => {
+             console.log(e);
+             throw e
+         })
+    return response;
+}

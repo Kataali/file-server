@@ -20,6 +20,7 @@ This a file server project that AmaliTech assigned to prospective National Servi
 - Delete account
 ### For the Admin:
 - Login with a password
+- Delete uploaded files
 - Update password
 - Logout
 
